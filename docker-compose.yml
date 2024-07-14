@@ -1,0 +1,136 @@
+services:
+  demo-dev:
+    build:
+      context: repos/demo
+      dockerfile: Dockerfile.dev
+    command: run dev
+    container_name: demo
+    depends_on:
+      - relay-dev
+    entrypoint: ["npm"]
+    ports:
+      - "5173:5173"
+    profiles:
+      - dev
+    restart: on-failure
+    volumes:
+      - ./repos/demo/:/app/
+      - /app/node_modules
+      - ./certs/localhost.crt:/etc/tls/cert:ro
+      - ./certs/localhost.key:/etc/tls/key:ro
+      - certs:/etc/ssl/certs
+    working_dir: /app
+
+  demo-prod:
+    build:
+      context: repos/demo
+      dockerfile: Dockerfile.prod
+    container_name: demo
+    depends_on:
+      - relay-prod
+    ports:
+      - "5173:5173"
+    profiles:
+      - prod
+    restart: on-failure
+    volumes:
+      - ./certs/localhost.crt:/etc/tls/cert:ro
+      - ./certs/localhost.key:/etc/tls/key:ro
+      - certs:/etc/ssl/certs
+
+  install-certs:
+    command: go run filippo.io/mkcert -install
+    environment:
+      CAROOT: /work/caroot
+    image: golang:latest
+    volumes:
+      - ${CAROOT:-.}:/work/caroot
+      - certs:/etc/ssl/certs
+      - ./repos/moq-rs/dev/go.mod:/work/go.mod:ro
+      - ./repos/moq-rs/dev/go.sum:/work/go.sum:ro
+    working_dir: /work
+
+  publish-moq:
+    build:
+      context: repos/moq-rs
+    container_name: publish-moq
+    network_mode: host
+    profiles:
+      - publish
+    restart: on-failure
+
+  dash-origin:
+    build:
+      context: repos/dash-origin
+    container_name: dash-origin
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "8079:8079"
+      - "8080:8080"
+    profiles:
+      - dev
+      - prod
+    restart: on-failure
+
+  relay-dev:
+    build:
+      context: repos/moq-rs
+    command: moq-relay --listen [::]:4443 --tls-cert /etc/tls/cert --tls-key /etc/tls/key --dev
+    container_name: relay
+    depends_on:
+      install-certs:
+        condition: service_completed_successfully
+    environment:
+      DEVELOPMENT: true
+      RUST_LOG: ${RUST_LOG:-debug}
+    ports:
+      - "4443:4443"
+      - 4443:4443/udp
+    profiles:
+      - dev
+    restart: on-failure
+    volumes:
+      - ./repos/moq-rs:/project
+      - ./certs/localhost.crt:/etc/tls/cert:ro
+      - ./certs/localhost.key:/etc/tls/key:ro
+      - certs:/etc/ssl/certs
+
+  relay-prod:
+    build:
+      context: repos/moq-rs
+    command: moq-relay --listen [::]:4443 --tls-cert /etc/tls/cert --tls-key /etc/tls/key
+    container_name: relay
+    environment:
+      RUST_LOG: ${RUST_LOG:-debug}
+    network_mode: host
+    ports:
+      - "4443:4443"
+      - 4443:4443/udp
+    profiles:
+      - prod
+    restart: on-failure
+    volumes:
+      - ./certs/localhost.crt:/etc/tls/cert:ro
+      - ./certs/localhost.key:/etc/tls/key:ro
+      - certs:/etc/ssl/certs
+
+  cockpit-server:
+    build:
+      context: repos/cockpit-server
+    cap_add:
+      - NET_ADMIN # Required for tc
+    container_name: cockpit-server
+    ports:
+      - "8000:8000"
+    profiles:
+      - dev
+      - prod
+    restart: on-failure
+    volumes:
+      - ./certs/localhost.crt:/app/cert/cert.pem:ro
+      - ./certs/localhost.key:/app/cert/key.pem:ro
+      - certs:/etc/ssl/certs
+
+volumes:
+  certs:

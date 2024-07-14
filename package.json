@@ -1,0 +1,11 @@
+{
+  "name": "moq-vs-dash",
+  "version": "1.0.0",
+  "description": "",
+  "workspaces": [
+    "repos/**"
+  ],
+  "scripts": {},
+  "author": "",
+  "license": "ISC"
+}

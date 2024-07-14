@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "start": "pm2 start origin.js -i 2",
+    "stop": "pm2 stop origin.js && pm2 delete origin.js"
+  },
+  "dependencies": {
+    "bl": "^6.0.9",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "pm2": "^5.3.0"
+  }
+}

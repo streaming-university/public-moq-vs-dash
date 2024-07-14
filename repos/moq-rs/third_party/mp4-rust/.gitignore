@@ -1,0 +1,9 @@
+/Cargo.lock
+/target
+**/*.rs.bk
+*.exe
+*.pdb
+*.mp4
+.idea/
+.vscode/
+!tests/samples/*.mp4
