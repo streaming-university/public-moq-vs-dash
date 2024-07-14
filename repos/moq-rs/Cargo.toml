@@ -1,0 +1,6 @@
+[workspace]
+members = ["moq-transport", "moq-relay", "moq-pub", "moq-api", "moq-clock"]
+resolver = "2"
+
+[patch.crates-io]
+mp4 = { path = "./third_party/mp4-rust" }

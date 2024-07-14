@@ -1,0 +1,3 @@
+[submodule "repos/moq-rs/third_party/mp4-rust"]
+	path = repos/moq-rs/third_party/mp4-rust
+	url = https://github.com/streaming-university/mp4-rust.git

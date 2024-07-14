@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "rootDir": ".",
+        "sourceMap": true,
+        "declaration": false,
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "importHelpers": true,
+        "target": "es2022",
+        "module": "esNext",
+        "lib": ["es2022", "dom", "webworker", "dom.Iterable"],
+        "skipLibCheck": true,
+        "skipDefaultLibCheck": true,
+
+        /* Bundler mode */
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "jsx": "react-jsx",
+
+        /* Linting */
+        "strict": true,
+        "allowImportingTsExtensions": true,
+        "noFallthroughCasesInSwitch": true
+    },
+    "include": ["src"],
+    "references": [{ "path": "./tsconfig.node.json" }]
+}

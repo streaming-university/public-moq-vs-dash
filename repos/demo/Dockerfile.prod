@@ -1,0 +1,17 @@
+FROM node:21 as builder
+
+# Set the working directory
+WORKDIR /build
+
+# Copy package.json
+COPY package.json .
+COPY src/lib/moq/package.json src/lib/moq/package.json
+
+# Install the dependencies
+RUN npm install
+
+# Build the app
+COPY . .
+RUN npm run build
+
+CMD ["npm", "run", "preview"]
