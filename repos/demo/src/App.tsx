@@ -349,7 +349,7 @@ export default function App({ mode }: { mode: PlayerType }) {
                             <span>This project is part of</span>
                             <a className="text-blue-400 underline" href="https://streaming.university">
                                 Streaming University
-                            </a> (Source code is coming soon...)
+                            </a> (<a href="https://github.com/streaming-university/public-moq-vs-dash" target="_blank">Source code</a>)
                         </>
                     }
                     {mode === "dash" && <span>Powered by <a href="https://dashjs.org/" target="_blank">dash.js</a>.</span>}
